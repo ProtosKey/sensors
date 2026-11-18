@@ -20,6 +20,7 @@ add_executable(sensors-daemon
     src/hwmon/sensor.c
     src/info/cpu_freq.c
     src/info/cpu_info.c
+    src/info/drm.c
     src/info/gpu_info.c
     src/info/nvidia.c
     src/info/profile.c

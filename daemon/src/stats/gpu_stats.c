@@ -1,9 +1,11 @@
 #include "stats/gpu_stats.h"
 #include "core/file_utils.h"
+#include "info/drm.h"
 #include "info/gpu_info.h"
 #include "info/nvidia.h"
 #include "stats/pick.h"
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 #define MIB 1048576.0
@@ -49,6 +51,25 @@ static void add_name(cJSON *gpu, const cJSON *device) {
   cJSON_AddStringToObject(gpu, "name", name);
 }
 
+static void add_known(cJSON *object, const char *key, double value) {
+  if (value >= 0) {
+    cJSON_AddNumberToObject(object, key, value);
+  }
+}
+
+/* A GPU without a hwmon device (e.g. Intel integrated graphics): the DRM
+ * subsystem still knows it, so it is shown with its name and, where the
+ * driver exposes it, the current clock. */
+static cJSON *bare_build(const drm_gpu_t *card) {
+  cJSON *gpu = cJSON_CreateObject();
+  const char *name = gpu_info_name(card->pci);
+
+  cJSON_AddStringToObject(gpu, "name", name ? name : card->driver);
+  cJSON_AddStringToObject(gpu, "driver", card->driver);
+  add_known(gpu, "freq", drm_freq_mhz(card));
+  return gpu;
+}
+
 static cJSON *gpu_build(const cJSON *device) {
   cJSON *gpu = cJSON_CreateObject();
   const cJSON *driver = cJSON_GetObjectItem(device, "driver");
@@ -64,12 +85,6 @@ static cJSON *gpu_build(const cJSON *device) {
   }
   add_memory(gpu, device, "gtt");
   return gpu;
-}
-
-static void add_known(cJSON *object, const char *key, double value) {
-  if (value >= 0) {
-    cJSON_AddNumberToObject(object, key, value);
-  }
 }
 
 static cJSON *nvidia_build(const char *pci_id) {
@@ -93,20 +108,41 @@ static cJSON *nvidia_build(const char *pci_id) {
   return gpu;
 }
 
+/* hwmon device of the GPU at this PCI address, or NULL. */
+static const cJSON *find_hwmon_gpu(const cJSON *devices, const char *pci) {
+  const cJSON *device;
+  cJSON_ArrayForEach(device, devices) {
+    const cJSON *bus_id = cJSON_GetObjectItem(device, "device");
+    if (pick_has_category(device, "gpu") && cJSON_IsString(bus_id) &&
+        strcmp(bus_id->valuestring, pci) == 0) {
+      return device;
+    }
+  }
+  return NULL;
+}
+
+#define MAX_GPUS 8
+
+/* Discrete NVIDIA GPUs first (their data comes from nvidia-smi), then all
+ * other GPUs in card order. */
 cJSON *gpu_stats(const cJSON *devices) {
   cJSON *gpus = cJSON_CreateArray();
 
-  char pci_ids[4][NVIDIA_PCI_SIZE];
-  int nvidia_count = nvidia_list(pci_ids, 4);
-  for (int i = 0; i < nvidia_count; i++) {
-    cJSON_AddItemToArray(gpus, nvidia_build(pci_ids[i]));
-  }
+  drm_gpu_t cards[MAX_GPUS];
+  int count = drm_list(cards, MAX_GPUS);
 
-  const cJSON *device;
-  cJSON_ArrayForEach(device, devices) {
-    if (pick_has_category(device, "gpu")) {
-      cJSON_AddItemToArray(gpus, gpu_build(device));
+  for (int i = 0; i < count; i++) {
+    if (cards[i].vendor == DRM_VENDOR_NVIDIA) {
+      cJSON_AddItemToArray(gpus, nvidia_build(cards[i].pci));
     }
+  }
+  for (int i = 0; i < count; i++) {
+    if (cards[i].vendor == DRM_VENDOR_NVIDIA) {
+      continue;
+    }
+    const cJSON *device = find_hwmon_gpu(devices, cards[i].pci);
+    cJSON_AddItemToArray(gpus,
+                         device ? gpu_build(device) : bare_build(&cards[i]));
   }
   return gpus;
 }
