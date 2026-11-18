@@ -4,7 +4,7 @@
 
 static int socket_path_get(char *buf, size_t size) {
   const char *runtime_dir = getenv("XDG_RUNTIME_DIR");
-  int len = snprintf(buf, size, "%s/asus-hub.sock",
+  int len = snprintf(buf, size, "%s/sensors.sock",
                      (runtime_dir && *runtime_dir) ? runtime_dir : "/tmp");
   return (len < 0 || (size_t)len >= size) ? -1 : 0;
 }
