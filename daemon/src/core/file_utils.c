@@ -1,42 +1,24 @@
-#include "utils.h"
+#include "core/file_utils.h"
 #include <errno.h>
 #include <fcntl.h>
-#include <stdio.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-#define BUFFER_SIZE 256
+#define READ_CHUNK 256
 
-char *run_cmd(const char *cmd) {
-  FILE *pipe = popen(cmd, "r");
-  if (!pipe) {
-    return NULL;
-  }
+#define BAD_READ_LONG_LONG -1
+#define SUC_READ_LONG_LONG 0
 
-  char buffer[BUFFER_SIZE];
-  if (fgets(buffer, sizeof(buffer), pipe) != NULL) {
-    buffer[strcspn(buffer, "\n")] = 0;
-  } else {
-    buffer[0] = '\0';
-  }
-
-  int status = pclose(pipe);
-  if (status == -1) {
-    return NULL;
-  }
-
-  return strdup(buffer);
-}
-
-char *read_file(const char *path) {
+char *read_text(const char *path) {
   char *buffer = NULL;
   int fd = open(path, O_RDONLY);
   if (fd == -1) {
     goto error_exit;
   }
 
-  size_t capacity = BUFFER_SIZE;
+  size_t capacity = READ_CHUNK;
   buffer = malloc(capacity * sizeof(char));
   if (buffer == NULL) {
     goto error_exit;
@@ -79,4 +61,36 @@ error_exit:
     close(fd);
   free(buffer);
   return NULL;
+}
+
+int read_long_long(const char *path, long long *out) {
+  char *text = read_text(path);
+  if (!text) {
+    goto error_exit;
+  }
+
+  char *end = NULL;
+  long long value = strtoll(text, &end, 10);
+  int parsed = (end != text);
+  free(text);
+  if (!parsed) {
+    goto error_exit;
+  }
+
+  *out = value;
+  return SUC_READ_LONG_LONG;
+error_exit:
+  return BAD_READ_LONG_LONG;
+}
+
+char *link_basename(const char *path) {
+  char target[PATH_MAX];
+  ssize_t len = readlink(path, target, sizeof(target) - 1);
+  if (len <= 0) {
+    return NULL;
+  }
+  target[len] = '\0';
+
+  const char *slash = strrchr(target, '/');
+  return strdup(slash ? slash + 1 : target);
 }
