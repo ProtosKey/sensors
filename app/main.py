@@ -123,6 +123,8 @@ class Socket(QObject):
 
 def main():
     app = QApplication(sys.argv)
+    app.setApplicationName("sensors")
+    app.setDesktopFileName("sensors")
     socket = Socket()
 
     engine = QQmlApplicationEngine()

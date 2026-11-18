@@ -13,7 +13,10 @@ Rectangle {
     color: Theme.mid
 
     Rectangle {
-        width: parent.width * parent.fraction
+        // Не уже собственной высоты: иначе радиус скругления не помещается, и
+        // заливка торчит из закруглённого края дорожки квадратным углом.
+        // Нулевое значение не рисуется вовсе.
+        width: parent.fraction > 0 ? Math.max(parent.width * parent.fraction, parent.height) : 0
         height: parent.height
         radius: parent.radius
         color: parent.warn ? Theme.loadColor(parent.fraction) : Theme.highlight
