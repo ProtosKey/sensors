@@ -10,12 +10,10 @@ RowLayout {
     spacing: 10
 
     Icon { path: iconPath }
-    Text {
+    SelectableText {
         text: parent.text
-        color: Theme.text
         font.pixelSize: 13
         font.bold: true
-        elide: Text.ElideRight
         Layout.fillWidth: true
     }
 }

@@ -21,7 +21,7 @@ RowLayout {
         font.pixelSize: 12
     }
     Item { Layout.fillWidth: true }
-    Text {
+    SelectableText {
         text: value
         color: valueColor
         font.pixelSize: 14

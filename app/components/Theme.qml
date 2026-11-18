@@ -12,6 +12,7 @@ QtObject {
     readonly property color mid: palette.mid
     readonly property color alternateBase: palette.alternateBase
     readonly property color highlight: palette.highlight
+    readonly property color highlightedText: palette.highlightedText
     readonly property color muted: Qt.alpha(palette.text, 0.65)
 
     readonly property color hot: "#e5534b"

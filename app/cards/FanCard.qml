@@ -23,9 +23,8 @@ Card {
             font.pixelSize: 12
         }
         Item { Layout.fillWidth: true }
-        Text {
+        SelectableText {
             text: Theme.num(rpm) + " RPM"
-            color: Theme.text
             font.pixelSize: 14
             font.bold: true
         }
