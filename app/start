@@ -1,0 +1,5 @@
+#!/usr/bin/fish
+
+cd (status dirname)
+pkill -9 -f "$PWD/main.py" || nohup .venv/bin/python3 "$PWD/main.py" >/dev/null 2>&1 &
+exit 0

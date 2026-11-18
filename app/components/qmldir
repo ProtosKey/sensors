@@ -1,0 +1,9 @@
+singleton Theme 1.0 Theme.qml
+Card 1.0 Card.qml
+Line 1.0 Line.qml
+Title 1.0 Title.qml
+Bar 1.0 Bar.qml
+Icon 1.0 Icon.qml
+FanIcon 1.0 FanIcon.qml
+CloseButton 1.0 CloseButton.qml
+FansModel 1.0 FansModel.qml
