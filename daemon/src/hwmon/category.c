@@ -4,11 +4,11 @@
 typedef struct {
   const char *driver;
   const char *category;
-} driver_rule;
+} driver_rule_t;
 
 #define COUNT(table) (sizeof(table) / sizeof((table)[0]))
 
-static const driver_rule EXACT_RULES[] = {
+static const driver_rule_t EXACT_RULES[] = {
     {"k10temp", "cpu"},
     {"coretemp", "cpu"},
     {"zenpower", "cpu"},
@@ -37,7 +37,7 @@ static const driver_rule EXACT_RULES[] = {
     {"acpitz", "virtual"},
 };
 
-static const driver_rule PREFIX_RULES[] = {
+static const driver_rule_t PREFIX_RULES[] = {
     {"nct", "board"},   {"it8", "board"},       {"f718", "board"},
     {"w836", "board"},  {"BAT", "power"},       {"AC", "power"},
     {"ucsi_", "power"}, {"iwlwifi", "network"}, {"ath", "network"},
