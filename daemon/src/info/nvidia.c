@@ -75,7 +75,7 @@ static double field_parse(const char *token) {
 
 static int line_parse(char *line, nvidia_info_t *out) {
   double *fields[] = {&out->temp, &out->power, &out->vram_used,
-                      &out->vram_total};
+                      &out->vram_total, &out->freq};
   char *save = NULL;
   char *token = strtok_r(line, ",", &save);
 
@@ -91,7 +91,7 @@ static int line_parse(char *line, nvidia_info_t *out) {
 
 void nvidia_read(const char *pci_id, nvidia_info_t *out) {
   out->active = 1;
-  out->temp = out->power = out->vram_used = out->vram_total = -1;
+  out->temp = out->power = out->vram_used = out->vram_total = out->freq = -1;
 
   if (!pci_id_is_safe(pci_id)) {
     return;
@@ -104,12 +104,13 @@ void nvidia_read(const char *pci_id, nvidia_info_t *out) {
   char cmd[256];
   snprintf(cmd, sizeof(cmd),
            "nvidia-smi -i %s --query-gpu=temperature.gpu,power.draw,"
-           "memory.used,memory.total --format=csv,noheader,nounits 2>/dev/null",
+           "memory.used,memory.total,clocks.gr "
+           "--format=csv,noheader,nounits 2>/dev/null",
            pci_id);
 
   char *line = proc_read_line(cmd);
   if (line && line_parse(line, out) != 0) {
-    out->temp = out->power = out->vram_used = out->vram_total = -1;
+    out->temp = out->power = out->vram_used = out->vram_total = out->freq = -1;
   }
   free(line);
 }

@@ -9,6 +9,7 @@ typedef struct {
   double power;
   double vram_used;
   double vram_total;
+  double freq;
 } nvidia_info_t;
 
 int nvidia_list(char pci_ids[][NVIDIA_PCI_SIZE], int max);
