@@ -1,5 +1,14 @@
-#!/usr/bin/fish
+#!/usr/bin/env fish
 
-cd (status dirname)
-pkill -9 -f "$PWD/main.py" || nohup .venv/bin/python3 "$PWD/main.py" >/dev/null 2>&1 &
-exit 0
+set -l bin $HOME/.local/bin/sensors-widget
+
+if pkill -x sensors-widget
+    exit 0
+end
+
+if not test -x $bin
+    echo "sensors-widget not found" >&2
+    exit 1
+end
+
+setsid $bin >/dev/null 2>&1 &
