@@ -36,7 +36,7 @@ Window {
         width: parent.width
         height: content.implicitHeight + 4
         radius: 15
-        color: Theme.mid
+        color: Theme.border
 
         // Перетаскивание окна за любое пустое место
         MouseArea {

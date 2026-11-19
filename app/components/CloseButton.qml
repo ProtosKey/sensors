@@ -7,7 +7,7 @@ Rectangle {
     width: 28
     height: 28
     radius: 14
-    color: mouse.containsMouse ? Theme.mid : "transparent"
+    color: mouse.containsMouse ? Theme.border : "transparent"
 
     Repeater {
         model: [45, -45]

@@ -10,7 +10,7 @@ Rectangle {
     Layout.topMargin: 2
     height: 5
     radius: 2.5
-    color: Theme.mid
+    color: Theme.border
 
     Rectangle {
         // Не уже собственной высоты: иначе радиус скругления не помещается, и

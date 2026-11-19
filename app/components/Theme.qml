@@ -9,7 +9,10 @@ QtObject {
 
     readonly property color text: palette.text
     readonly property color window: palette.window
-    readonly property color mid: palette.mid
+    // Рамки, подложки полос и фон при наведении. Роль palette.mid в разных темах
+    // значит разное (в Breeze Dark она темнее фона, и рамки пропадают), поэтому цвет
+    // считается от самой темы: фон, слегка подмешанный к цвету текста.
+    readonly property color border: Qt.tint(palette.window, Qt.alpha(palette.text, 0.15))
     readonly property color alternateBase: palette.alternateBase
     readonly property color highlight: palette.highlight
     readonly property color highlightedText: palette.highlightedText

@@ -9,7 +9,7 @@ Rectangle {
     implicitHeight: column.implicitHeight + 24
     radius: 10
     color: Theme.alternateBase
-    border.color: Theme.mid
+    border.color: Theme.border
     border.width: 1
 
     ColumnLayout {
