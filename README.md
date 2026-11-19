@@ -45,7 +45,15 @@
 | Debian / Ubuntu | `build-essential cmake pkg-config libcjson-dev libudev-dev` |
 | Fedora | `gcc cmake pkgconf-pkg-config cjson-devel systemd-devel` |
 
-**Интерфейс:** Python 3 и PySide6 версии 6.6 или новее, разрабатывалось на 6.12.
+**Интерфейс (для сборки):** компилятор C++17, CMake ≥ 3.16, Qt 6.6 или новее
+(`Core`, `Gui`, `Network`, `Qml`, `Quick`; разрабатывалось на 6.12). При работе
+нужен только системный Qt 6 (на KDE Plasma 6 он уже установлен).
+
+| Дистрибутив | Пакеты |
+|---|---|
+| Arch | `qt6-base qt6-declarative` |
+| Debian / Ubuntu | `qt6-base-dev qt6-declarative-dev` |
+| Fedora | `qt6-qtbase-devel qt6-qtdeclarative-devel` |
 
 **Необязательно:** `asusctl`, `nvidia-smi`.
 
@@ -56,9 +64,9 @@ cmake -S daemon -B daemon/build
 cmake --build daemon/build
 ./daemon/build/sensors-daemon         
 
-python -m venv app/.venv
-app/.venv/bin/pip install PySide6
-app/.venv/bin/python app/main.py    
+cmake -S app -B app/build
+cmake --build app/build
+./app/build/sensors-widget       
 ```
 
 Интерфейс и демон должны быть одной версии: у протокола пока нет версионирования.
@@ -136,9 +144,11 @@ daemon/                      демон на C (CMake)
     info/                    CPU, GPU (DRM/udev), NVIDIA, RAM, профиль питания
     stats/                   собирает JSON для cpu / gpu / fans / ram
     server/                  сервер на unix-сокете, команды
-app/                         интерфейс
-  main.py                    клиент сокета, передаёт данные в QML
-  main.qml                   окно и раскладка
+app/                         интерфейс (C++/Qt + QML, CMake)
+  src/
+    main.cpp                 окно и движок QML
+    SensorsClient.*          клиент сокета, передаёт данные в QML
+  main.qml                   окно и раскладка (QML встраивается в бинарник)
   components/                Theme, Card, Line, Icon, FanIcon, ...
   cards/                     по файлу на каждую карточку
 ```
