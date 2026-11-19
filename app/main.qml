@@ -12,11 +12,16 @@ Window {
     visible: true
     title: "Sensors"
     color: "transparent"
-    flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
 
-    // Начальная позиция (работает на X11, на Wayland проигнорируется)
-    x: Screen.desktopAvailableWidth - width - 20
-    y: Screen.desktopAvailableHeight - height - 20
+    readonly property bool wayland: Qt.platform.pluginName.startsWith("wayland")
+    flags: Qt.FramelessWindowHint | (wayland ? 0 : Qt.WindowStaysOnTopHint)
+
+    Component.onCompleted: {
+        if (!wayland) {
+            x = Screen.desktopAvailableWidth - width - 20
+            y = Screen.desktopAvailableHeight - height - 20
+        }
+    }
 
     // Анимации крутятся только пока окно видно
     readonly property bool windowActive: visible && visibility !== Window.Minimized
@@ -76,8 +81,11 @@ Window {
                     Layout.bottomMargin: 4
                 }
 
-                ProfileCard { profile: socket.profile }
-                CpuCard { cpu: socket.cpu }
+                // Без данных показываем только заголовок и предупреждение выше:
+                // карточки с «N/A» и прочерками ничего не говорят. GPU, вентиляторы
+                // и RAM без данных и так пусты (у них нет элементов в модели).
+                ProfileCard { visible: socket.hasData; profile: socket.profile }
+                CpuCard { visible: socket.hasData; cpu: socket.cpu }
 
                 Repeater {
                     model: socket.gpu

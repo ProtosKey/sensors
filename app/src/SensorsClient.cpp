@@ -110,5 +110,6 @@ void SensorsClient::parseLine(const QByteArray &line) {
   m_gpu = obj.value(QStringLiteral("gpu")).toArray().toVariantList();
   m_fans = obj.value(QStringLiteral("fans")).toArray().toVariantList();
   m_ram = obj.value(QStringLiteral("ram")).toObject().toVariantMap();
+  m_hasData = true;
   emit statusChanged();
 }

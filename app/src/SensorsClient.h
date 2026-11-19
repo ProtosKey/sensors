@@ -11,6 +11,9 @@
 class SensorsClient : public QObject {
   Q_OBJECT
   Q_PROPERTY(bool connected READ connected NOTIFY connectionChanged)
+  // true once the first answer has arrived (stays true if the daemon goes away
+  // later, so the last values remain on screen next to the warning)
+  Q_PROPERTY(bool hasData READ hasData NOTIFY statusChanged)
   Q_PROPERTY(QString profile READ profile NOTIFY statusChanged)
   Q_PROPERTY(QVariantMap cpu READ cpu NOTIFY statusChanged)
   Q_PROPERTY(QVariantList gpu READ gpu NOTIFY statusChanged)
@@ -21,6 +24,7 @@ public:
   explicit SensorsClient(QObject *parent = nullptr);
 
   bool connected() const { return m_connected; }
+  bool hasData() const { return m_hasData; }
   QString profile() const { return m_profile; }
   QVariantMap cpu() const { return m_cpu; }
   QVariantList gpu() const { return m_gpu; }
@@ -48,6 +52,7 @@ private:
   QByteArray m_buffer;
 
   bool m_connected = false;
+  bool m_hasData = false;
   QString m_profile;
   QVariantMap m_cpu;
   QVariantList m_gpu;
