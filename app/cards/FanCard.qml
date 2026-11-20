@@ -3,29 +3,31 @@ import QtQuick.Layouts
 import "../components"
 
 Card {
-    id: card
+    id: fanCard
 
-    property string label
     property real rpm: 0
-    property bool active: true // крутить значок только пока окно видно
+    property string label
+    property bool is_active: true
 
     RowLayout {
         Layout.fillWidth: true
-        spacing: 10
+        spacing: Theme.rowSpacing
 
         FanIcon {
-            rpm: card.rpm
-            active: card.active
+            rpm: fanCard.rpm
+            active: fanCard.is_active
         }
         Text {
-            text: label.replace(/_/g, " ").toUpperCase()
+            text: Theme.capitalize(fanCard.label.replace(/_/g, " "))
             color: Theme.muted
-            font.pixelSize: 12
+            font.pointSize: Theme.sizeLabel
         }
-        Item { Layout.fillWidth: true }
+        Item {
+            Layout.fillWidth: true
+        }
         SelectableText {
-            text: Theme.num(rpm) + " RPM"
-            font.pixelSize: 14
+            text: Theme.num(fanCard.rpm) + " RPM"
+            font.pointSize: Theme.sizeValue
             font.bold: true
         }
     }

@@ -2,11 +2,13 @@ import QtQuick
 import "../components"
 
 Card {
+    id: profileCard
+
     property string profile
 
     Line {
         iconPath: Theme.iconProfile
         label: qsTr("Profile")
-        value: profile || "N/A"
+        value: profileCard.profile || "N/A"
     }
 }

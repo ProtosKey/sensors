@@ -2,17 +2,18 @@ import QtQuick
 import "../components"
 
 Card {
-    // {used, total} в МиБ
+    id: ramCard
+
     property var ram: ({})
 
-    visible: ram.total !== undefined
+    visible: ramCard.ram.total !== undefined
 
     Line {
         iconPath: Theme.iconRam
         label: "RAM"
-        value: Theme.gigabytes(ram.used) + " / " + Theme.gigabytes(ram.total) + " GB"
+        value: Theme.gibibytes(ramCard.ram.used) + " / " + Theme.gibibytes(ramCard.ram.total) + " GiB"
     }
     Bar {
-        fraction: Theme.ratio(ram.used, ram.total)
+        fraction: Theme.ratio(ramCard.ram.used, ramCard.ram.total)
     }
 }
