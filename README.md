@@ -10,7 +10,7 @@
 - **GPU:** все видеокарты в системе, включая дискретные NVIDIA; название, температура, мощность, частота, VRAM или GTT
 - **FAN:** обороты с анимацией
 - **RAM:** занято и сколько доступно
-- **Профиль питания** (через `asusctl`, необязательно)
+- **Профиль питания** (из `/sys/firmware/acpi/platform_profile`)
 - Root не нужен: всё читается из `/sys` и `/proc`
 
 ## Как это устроено
@@ -55,7 +55,7 @@
 | Debian / Ubuntu | `qt6-base-dev qt6-declarative-dev` |
 | Fedora | `qt6-qtbase-devel qt6-qtdeclarative-devel` |
 
-**Необязательно:** `asusctl`, `nvidia-smi`.
+**Необязательно:** `nvidia-smi`.
 
 ## Сборка и запуск
 
@@ -113,7 +113,7 @@ systemctl --user enable --now sensors.service
 | Intel GPU | частота из `gt_act_freq_mhz` | только название и частота; температура, мощность и память без root недоступны |
 | Вентиляторы | hwmon `fan*_input` | безымянные (`fan1`) скрываются, если есть именованные |
 | RAM | `/proc/meminfo` | занято = всего - доступно |
-| Профиль питания | `asusctl profile get` | без `asusctl` показывается `unknown` |
+| Профиль питания | `/sys/firmware/acpi/platform_profile` | первая буква заглавная (`quiet` → `Quiet`); если файла нет, показывается `unknown` |
 
 ## Если что-то не работает
 
@@ -127,8 +127,8 @@ systemctl --user enable --now sensors.service
   указан `~`, `$HOME` или относительный путь.
 - **Нет видеокарты:** пришлите вывод `ls /sys/class/drm` и
   `lspci | grep -iE "vga|3d|display"`.
-- **`asusctl: command not found` в журнале демона:** на машинах не от ASUS это
-  безвредно, профиль показывается как `unknown`.
+- **Профиль `unknown`:** прошивка не поддерживает ACPI platform profile
+  (нет файла `/sys/firmware/acpi/platform_profile`).
 - **Положение окна или «поверх всех окон» игнорируется:** на Wayland это решает
   композитор. В KDE используйте правило окна (Alt+F3, «Дополнительные действия»,
   «Особые параметры окна»).
