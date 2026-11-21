@@ -1,18 +1,21 @@
 import QtQuick
 import QtQuick.Layouts
 
-// Заголовок карточки: иконка + название.
 RowLayout {
+    id: title
+
     property string iconPath
     property string text
 
     Layout.fillWidth: true
-    spacing: 10
+    spacing: Theme.rowSpacing
 
-    Icon { path: iconPath }
+    Icon {
+        path: title.iconPath
+    }
     SelectableText {
-        text: parent.text
-        font.pixelSize: 13
+        text: title.text
+        font.pointSize: Theme.sizeTitle
         font.bold: true
         Layout.fillWidth: true
     }

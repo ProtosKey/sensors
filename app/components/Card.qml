@@ -1,23 +1,24 @@
 import QtQuick
 import QtQuick.Layouts
 
-// Карточка: всё, что положено внутрь, попадает во вложенную колонку.
 Rectangle {
+    id: card
+
     default property alias content: column.data
 
     Layout.fillWidth: true
-    implicitHeight: column.implicitHeight + 24
-    radius: 10
+    implicitHeight: column.implicitHeight + 2 * Theme.cardPadding
+    radius: Theme.cardRadius
     color: Theme.alternateBase
     border.color: Theme.border
-    border.width: 1
+    border.width: Theme.lineWidth
 
     ColumnLayout {
         id: column
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: 12
-        spacing: 5
+        anchors.verticalCenter: card.verticalCenter
+        anchors.left: card.left
+        anchors.right: card.right
+        anchors.margins: Theme.cardPadding
+        spacing: Theme.cardSpacing
     }
 }

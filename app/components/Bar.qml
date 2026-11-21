@@ -1,24 +1,22 @@
 import QtQuick
 import QtQuick.Layouts
 
-// Тонкая полоса заполнения 0..1.
 Rectangle {
+    id: bar
+
     property real fraction: 0
-    property bool warn: true // подсвечивать при высоком заполнении
+    property bool warning: true
 
     Layout.fillWidth: true
-    Layout.topMargin: 2
-    height: 5
-    radius: 2.5
+    Layout.topMargin: Theme.barMargin
+    height: Theme.barHeight
+    radius: height / 2
     color: Theme.border
 
     Rectangle {
-        // Не уже собственной высоты: иначе радиус скругления не помещается, и
-        // заливка торчит из закруглённого края дорожки квадратным углом.
-        // Нулевое значение не рисуется вовсе.
-        width: parent.fraction > 0 ? Math.max(parent.width * parent.fraction, parent.height) : 0
-        height: parent.height
-        radius: parent.radius
-        color: parent.warn ? Theme.loadColor(parent.fraction) : Theme.highlight
+        width: bar.fraction > 0 ? Math.max(bar.width * bar.fraction, bar.height) : 0
+        height: bar.height
+        radius: bar.radius
+        color: bar.warning ? Theme.loadColor(bar.fraction) : Theme.highlight
     }
 }

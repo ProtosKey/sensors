@@ -38,7 +38,7 @@ Card {
     }
     Bar {
         visible: gpuCard.gpu.vram !== undefined
-        warn: false
+        warning: false
         fraction: gpuCard.gpu.vram ? Theme.ratio(gpuCard.gpu.vram.used, gpuCard.gpu.vram.total) : 0
     }
     Line {

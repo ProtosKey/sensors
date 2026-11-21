@@ -1,22 +1,21 @@
 import QtQuick
 import QtQuick.Shapes
 
-// Иконка-контур по SVG-пути на холсте 24x24.
 Item {
     id: icon
     property string path
 
-    implicitWidth: 24
-    implicitHeight: 24
+    implicitWidth: Theme.iconSize
+    implicitHeight: Theme.iconSize
 
     Shape {
-        width: 24
-        height: 24
+        width: Theme.iconSize
+        height: Theme.iconSize
         preferredRendererType: Shape.CurveRenderer
 
         ShapePath {
             strokeColor: Theme.text
-            strokeWidth: 1
+            strokeWidth: Theme.lineWidth
             fillColor: "transparent"
             capStyle: ShapePath.RoundCap
             joinStyle: ShapePath.RoundJoin

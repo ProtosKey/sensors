@@ -1,30 +1,33 @@
 import QtQuick
 import QtQuick.Layouts
 
-// Строка «подпись ........ значение» (с необязательной иконкой слева).
 RowLayout {
+    id: line
+
     property string label
     property string value
     property color valueColor: Theme.text
     property string iconPath
 
     Layout.fillWidth: true
-    spacing: 10
+    spacing: Theme.rowSpacing
 
     Icon {
-        visible: iconPath !== ""
-        path: iconPath
+        visible: line.iconPath !== ""
+        path: line.iconPath
     }
     Text {
-        text: label
+        text: line.label
         color: Theme.muted
-        font.pixelSize: 12
+        font.pointSize: Theme.sizeLabel
     }
-    Item { Layout.fillWidth: true }
+    Item {
+        Layout.fillWidth: true
+    }
     SelectableText {
-        text: value
-        color: valueColor
-        font.pixelSize: 14
+        text: line.value
+        color: line.valueColor
+        font.pointSize: Theme.sizeValue
         font.bold: true
     }
 }

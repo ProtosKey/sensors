@@ -6,7 +6,8 @@ import "cards"
 
 Window {
     id: root
-    width: 340
+
+    width: Math.round(Theme.windowWidth * Theme.fontScale)
     height: background.height
 
     visible: true
@@ -18,12 +19,11 @@ Window {
 
     Component.onCompleted: {
         if (!wayland) {
-            x = Screen.desktopAvailableWidth - width - 20
-            y = Screen.desktopAvailableHeight - height - 20
+            x = Screen.desktopAvailableWidth - width - Theme.windowScreenMargin
+            y = Screen.desktopAvailableHeight - height - Theme.windowScreenMargin
         }
     }
 
-    // Анимации крутятся только пока окно видно
     readonly property bool windowActive: visible && visibility !== Window.Minimized
 
     Shortcut {
@@ -39,35 +39,34 @@ Window {
     Rectangle {
         id: background
         width: parent.width
-        height: content.implicitHeight + 4
-        radius: 15
+        height: content.implicitHeight + 2 * Theme.windowBorder + 2
+        radius: Theme.windowRadius
         color: Theme.border
 
-        // Перетаскивание окна за любое пустое место
         MouseArea {
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton
-            onPressed: root.startSystemMove() // работает в KDE/Wayland
+            onPressed: root.startSystemMove()
         }
 
         Rectangle {
             id: content
             anchors.fill: parent
-            anchors.margins: 1
-            radius: 13
+            anchors.margins: Theme.windowBorder
+            radius: Theme.windowRadius - 2 * Theme.windowBorder
             color: Theme.window
-            implicitHeight: column.implicitHeight + 30
+            implicitHeight: column.implicitHeight + 2 * Theme.windowPadding
 
             ColumnLayout {
                 id: column
                 anchors.fill: parent
-                anchors.margins: 15
-                spacing: 8
+                anchors.margins: Theme.windowPadding
+                spacing: Theme.sectionSpacing
 
                 Text {
                     text: qsTr("Sensors")
                     color: Theme.text
-                    font.pixelSize: 18
+                    font.pointSize: Theme.sizeHeader
                     font.bold: true
                     Layout.alignment: Qt.AlignHCenter
                 }
@@ -76,20 +75,25 @@ Window {
                     visible: !socket.connected
                     text: qsTr("Daemon not connected")
                     color: Theme.error
-                    font.pixelSize: 11
+                    font.pointSize: Theme.sizeNote
                     Layout.alignment: Qt.AlignHCenter
-                    Layout.bottomMargin: 4
+                    Layout.bottomMargin: Theme.noteMargin
                 }
 
-                // Без данных показываем только заголовок и предупреждение выше:
-                // карточки с «N/A» и прочерками ничего не говорят. GPU, вентиляторы
-                // и RAM без данных и так пусты (у них нет элементов в модели).
-                ProfileCard { visible: socket.hasData; profile: socket.profile }
-                CpuCard { visible: socket.hasData; cpu: socket.cpu }
+                ProfileCard {
+                    visible: socket.hasData
+                    profile: socket.profile
+                }
+                CpuCard {
+                    visible: socket.hasData
+                    cpu: socket.cpu
+                }
 
                 Repeater {
                     model: socket.gpu
-                    delegate: GpuCard { gpu: modelData }
+                    delegate: GpuCard {
+                        gpu: modelData
+                    }
                 }
 
                 Repeater {
@@ -97,11 +101,13 @@ Window {
                     delegate: FanCard {
                         label: model.label
                         rpm: model.rpm
-                        active: root.windowActive
+                        is_active: root.windowActive
                     }
                 }
 
-                RamCard { ram: socket.ram }
+                RamCard {
+                    ram: socket.ram
+                }
             }
         }
     }
@@ -109,8 +115,8 @@ Window {
     CloseButton {
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.topMargin: 14
-        anchors.rightMargin: 14
+        anchors.topMargin: Theme.closeButtonMargin
+        anchors.rightMargin: Theme.closeButtonMargin
         onClicked: Qt.quit()
     }
 }
